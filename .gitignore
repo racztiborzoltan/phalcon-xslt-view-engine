@@ -1,0 +1,8 @@
+# Eclipse project meta files:
+.settings
+.buildpath
+.project
+
+# Composer:
+/vendor/
+/composer.lock
