@@ -2,9 +2,12 @@
 
 require_once '../vendor/autoload.php';
 
-use Phalcon\DI\FactoryDefault;
-use Phalcon\Mvc\View;
-use Z\Phalcon\Mvc\View\Engine\XSLT;
+use
+    Phalcon\DI\FactoryDefault,
+    Phalcon\Mvc\View,
+    Phalcon\Cache\Frontend\Output as OutputFrontend,
+    Phalcon\Cache\Backend\File as FileBackend,
+    Z\Phalcon\Mvc\View\Engine\XSLT;
 
 
 $di = new FactoryDefault();
@@ -38,7 +41,29 @@ $di->set('view', function () {
 }, true);
 
 
+//Set the views cache service
+$di->set('viewCache', function() {
+
+    //Cache data for one day by default
+    $frontCache = new OutputFrontend(array(
+        "lifetime" => 86400
+    ));
+
+    $cacheDir = 'cache/';
+    if (!is_dir($cacheDir))
+        mkdir($cacheDir, 0755, true);
+
+    //Memcached connection settings
+    $cache = new FileBackend($frontCache, array(
+        'cacheDir' => $cacheDir
+    ));
+
+    return $cache;
+});
+
+
 $view = $di->get('view');
+
 
 // Load test xml as array:
 $test_params = XML2Array::createArray(file_get_contents('users.xml'));
@@ -49,5 +74,10 @@ echo $view->getRender('products', 'list',
         //Set any extra options here
         $view->setViewsDir("views/");
         $view->setRenderLevel(Phalcon\Mvc\View::LEVEL_MAIN_LAYOUT);
+
+        // Cache this view for 1 hour
+        $view->cache(array(
+            "lifetime" => 3600
+        ));
     }
 );
