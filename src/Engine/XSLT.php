@@ -74,7 +74,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine
         $proc->importStyleSheet($xsldoc);
         $content = $proc->transformToXML($xmldoc);
 
-        if ($this instanceof \Phalcon\Mvc\View)
+        if ($this->_view instanceof \Phalcon\Mvc\View)
             if ($this->_view->isCaching()) {
                 $this->_view->setContent($content);
                 echo $content;
