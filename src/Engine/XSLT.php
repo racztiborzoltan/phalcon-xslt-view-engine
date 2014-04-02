@@ -10,8 +10,26 @@ namespace Z\Phalcon\Mvc\View\Engine;
 class XSLT extends \Phalcon\Mvc\View\Engine
 {
 
+    /**
+     * Array of options
+     * Structure:
+     * Array(
+     *  //
+     *  // List of enabled PHP function for XSLT files
+     *  // Default: array()
+     *  //
+     *  'phpFunctions' => array(),
+     *  //
+     *  // Variable name (tag name) in generated XML, that contains the content of previous View in the View hierarchy
+     *  // Default: '_getContent'
+     *  //
+     *  'prevContentTagName' => string
+     * )
+     * @var array
+     */
     protected $_options = array(
-        'phpFunctions' => array()
+        'phpFunctions' => array(),
+        'prevContentTagName' => '_getContent',
     );
 
     /**
@@ -59,6 +77,9 @@ class XSLT extends \Phalcon\Mvc\View\Engine
      */
     public function render($path, $params, $mustClean = null)
     {
+        // Add to template variables the content of previous View in View hierarchy:
+        $params[$this->_options['prevContentTagName']] = $this->_view->getContent();
+
         // Convert parameters to XML:
         $xml = \Array2XML::createXML('variables', $params)->saveXML();
 
