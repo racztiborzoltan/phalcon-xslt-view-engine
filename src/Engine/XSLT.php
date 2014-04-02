@@ -78,6 +78,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine
             if ($this->_view->isCaching()) {
                 $this->_view->setContent($content);
                 echo $content;
+                return;
             }
 
         if ($mustClean) {
