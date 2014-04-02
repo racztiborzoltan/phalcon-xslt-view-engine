@@ -12,6 +12,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine
 
     /**
      * Array of options
+     *
      * Structure:
      * Array(
      *  //
@@ -24,12 +25,19 @@ class XSLT extends \Phalcon\Mvc\View\Engine
      *  // Default: '_getContent'
      *  //
      *  'prevContentTagName' => string
+     *  //
+     *  // Name of root node in temporarily generated XML
+     *  // Default: 'variables'
+     *  //
+     * 'rootTagName' => string
      * )
+     *
      * @var array
      */
     protected $_options = array(
         'phpFunctions' => array(),
         'prevContentTagName' => '_getContent',
+        'rootTagName' => 'variables'
     );
 
     /**
@@ -81,7 +89,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine
         $params[$this->_options['prevContentTagName']] = $this->_view->getContent();
 
         // Convert parameters to XML:
-        $xml = \Array2XML::createXML('variables', $params)->saveXML();
+        $xml = \Array2XML::createXML($this->_options['rootTagName'], $params)->saveXML();
 
         // Create and load XML:
         $xmldoc = new \DOMDocument();
