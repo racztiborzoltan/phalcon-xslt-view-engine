@@ -85,8 +85,10 @@ class XSLT extends \Phalcon\Mvc\View\Engine
      */
     public function render($path, $params, $mustClean = null)
     {
+        $view = $this->getView();
+
         // Add to template variables the content of previous View in View hierarchy:
-        $params[$this->_options['prevContentTagName']] = $this->_view->getContent();
+        $params[$this->_options['prevContentTagName']] = $view->getContent();
 
         // Convert parameters to XML:
         $xml = \Array2XML::createXML($this->_options['rootTagName'], $params)->saveXML();
@@ -103,15 +105,15 @@ class XSLT extends \Phalcon\Mvc\View\Engine
         $proc->importStyleSheet($xsldoc);
         $content = $proc->transformToXML($xmldoc);
 
-        if ($this->_view instanceof \Phalcon\Mvc\View)
-            if ($this->_view->isCaching()) {
-                $this->_view->setContent($content);
+        if ($view instanceof \Phalcon\Mvc\View)
+            if ($view->isCaching()) {
+                $view->setContent($content);
                 echo $content;
                 return;
             }
 
         if ($mustClean) {
-            $this->_view->setContent($content);
+            $view->setContent($content);
         } else {
             echo $content;
         }
