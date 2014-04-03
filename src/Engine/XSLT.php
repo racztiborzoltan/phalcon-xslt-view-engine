@@ -41,17 +41,6 @@ class XSLT extends \Phalcon\Mvc\View\Engine
     );
 
     /**
-     * Adapter constructor
-     *
-     * @param \Phalcon\Mvc\View $view
-     * @param \Phalcon\DI $di
-     */
-    public function __construct($view, $di)
-    {
-        parent::__construct($view, $di);
-    }
-
-    /**
      * Set options of XSLT engine
      *
      * @param array $options
