@@ -40,6 +40,15 @@ class XSLT extends \Phalcon\Mvc\View\Engine
         'rootTagName' => 'variables'
     );
 
+    protected $_content = null;
+
+    protected $_path = null;
+
+    protected $_parameters = array();
+
+    protected $_clean = null;
+
+    protected $_eventsManager;
     /**
      * Set options of XSLT engine
      *
@@ -67,6 +76,88 @@ class XSLT extends \Phalcon\Mvc\View\Engine
     }
 
     /**
+     * Get path of XSL file
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->_path;
+    }
+
+    /**
+     * Set path of XSL file
+     * @param string $path
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
+    public function setPath($path)
+    {
+        $this->_path = $path;
+        return $this;
+    }
+
+    /**
+     * Get parameters and values
+     * Structure of return value:
+     * Array(
+     *  'parameter_name' => 'value',
+     *  ...
+     * )
+     * @return array
+     */
+    public function getParameters()
+    {
+        return $this->_parameters;
+    }
+
+    /**
+     * Override parameters and values
+     * Structure of first parameter:
+     * Array(
+     *  'parameter_name' => 'value',
+     *  ...
+     * )
+     *
+     * @param array $parameters
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
+    public function setParameters(array $parameters)
+    {
+        $this->_parameters = $parameters;
+        return $this;
+    }
+
+    /**
+     * Merge additional parameters and values
+     * @param array $parameters
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
+    public function mergeParameters(array $parameters)
+    {
+        $this->_parameters = array_merge($this->_parameters, $parameters);
+        return $this;
+    }
+
+    /**
+     *
+     * @return bool
+     */
+    public function getClean()
+    {
+        return $this->_clean;
+    }
+
+    /**
+     *
+     * @param bool $clean
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
+    public function setClean($clean)
+    {
+        $this->_clean = $clean;
+        return $this;
+    }
+
+    /**
      * Renders a view using the template engine
      *
      * @param string $path
@@ -78,6 +169,11 @@ class XSLT extends \Phalcon\Mvc\View\Engine
 
         // Add to template variables the content of previous View in View hierarchy:
         $params[$this->_options['prevContentTagName']] = $view->getContent();
+
+        // Set values of parameters in class:
+        $this->setPath($path);
+        $this->setParameters($params);
+        $this->setClean($mustClean);
 
         // Convert parameters to XML:
         $xml = \Array2XML::createXML($this->_options['rootTagName'], $params)->saveXML();
