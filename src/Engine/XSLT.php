@@ -1,13 +1,14 @@
 <?php
 namespace Z\Phalcon\Mvc\View\Engine;
 
+use Phalcon\Events\EventsAwareInterface;
 /**
  * Adapter to use XSLT as templating engine
  *
  * @author Rácz Tibor Zoltán <racztiborzoltan@gmail.com>
  *
  */
-class XSLT extends \Phalcon\Mvc\View\Engine
+class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
 {
 
     /**
@@ -49,6 +50,28 @@ class XSLT extends \Phalcon\Mvc\View\Engine
     protected $_clean = null;
 
     protected $_eventsManager;
+
+    /**
+     * Sets the events manager
+     *
+     * @param \Phalcon\Events\ManagerInterface $eventsManager
+     */
+    public function setEventsManager($eventsManager)
+    {
+        $this->_eventsManager = $eventsManager;
+    }
+
+
+    /**
+     * Returns the internal event manager
+     *
+     * @return \Phalcon\Events\ManagerInterface
+    */
+    public function getEventsManager()
+    {
+        return $this->_eventsManager;
+    }
+
     /**
      * Set options of XSLT engine
      *
@@ -175,6 +198,8 @@ class XSLT extends \Phalcon\Mvc\View\Engine
         $this->setParameters($params);
         $this->setClean($mustClean);
 
+        $this->_eventsManager->fire('xslt-view-engine:beforeRender', $this);
+
         // Convert parameters to XML:
         $xml = \Array2XML::createXML($this->_options['rootTagName'], $params)->saveXML();
 
@@ -189,6 +214,8 @@ class XSLT extends \Phalcon\Mvc\View\Engine
         $proc->registerPHPFunctions($this->_options['phpFunctions']);
         $proc->importStyleSheet($xsldoc);
         $content = $proc->transformToXML($xmldoc);
+
+        $this->_eventsManager->fire('xslt-view-engine:afterRender', $this, $content);
 
         if ($view instanceof \Phalcon\Mvc\View)
             if ($view->isCaching()) {
