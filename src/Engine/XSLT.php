@@ -136,7 +136,9 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
                 $this->_options[$key] = $options[$key];
         }
 
-        if (empty($this->_options['phpFunctions']))
+        if (empty($this->_options['phpFunctions'])
+            || (!is_array($this->_options['phpFunctions']) && !is_string($this->_options['phpFunctions']))
+            )
             $this->_options['phpFunctions'] = array();
     }
 
