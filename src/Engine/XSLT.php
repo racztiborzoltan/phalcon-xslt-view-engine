@@ -172,6 +172,16 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
     }
 
     /**
+     * Remove all parameters
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
+    public function removeParameters()
+    {
+        $this->_parameters = array();
+        return $this;
+    }
+
+    /**
      *
      * @return bool
      */
