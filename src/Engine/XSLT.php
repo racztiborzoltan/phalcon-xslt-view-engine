@@ -31,6 +31,16 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
      *  // Default: 'variables'
      *  //
      * 'rootTagName' => string
+     * //
+     * // Default parameters for XSLT class
+     * // Default: array()
+     * // Structure:
+     * //   Array(
+     * //       'parameter_name' => 'parameter_value',
+     * //       ...
+     * //   )
+     * //
+     * 'defaultParameters' => array
      * )
      *
      * @var array
@@ -38,7 +48,8 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
     protected $_options = array(
         'phpFunctions' => array(),
         'prevContentTagName' => '_getContent',
-        'rootTagName' => 'variables'
+        'rootTagName' => 'variables',
+        'defaultParameters' => array()
     );
 
     protected $_content = null;
@@ -195,8 +206,8 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
 
         // Set values of parameters in class:
         $this->setPath($path);
-        $this->setParameters($params);
-        $this->setClean($mustClean);
+        $this->mergeParameters(array_merge($this->_options['defaultParameters'], $params));
+        $this->setMustClean($mustClean);
 
         $this->_eventsManager->fire('xslt-view-engine:beforeRender', $this);
 
