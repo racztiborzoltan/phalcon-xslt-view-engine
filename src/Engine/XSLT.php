@@ -62,6 +62,39 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
 
     protected $_eventsManager;
 
+    protected static $_instances = array();
+
+    protected $_instanceId = null;
+
+	/* (non-PHPdoc)
+	 * @see \Phalcon\Mvc\View\Engine::__construct()
+	 */
+	public function __construct($view, $dependencyInjector = null)
+	{
+	    parent::__construct($view, $dependencyInjector);
+
+	    $this->_instanceId = uniqid();
+        self::$_instances[$this->_instanceId] = &$this;
+	}
+
+	public function getInstanceId()
+	{
+	    return $this->_instanceId;
+	}
+
+    /**
+     *
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
+    public static function &getInstance($instanceId)
+    {
+        if (isset(self::$_instances[$instanceId]))
+            return self::$_instances[$instanceId];
+        else
+            return null;
+        ;
+    }
+
     /**
      * Sets the events manager
      *
