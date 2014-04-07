@@ -58,7 +58,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
 
     protected $_parameters = array();
 
-    protected $_clean = null;
+    protected $_mustclean = null;
 
     protected $_eventsManager;
 
@@ -175,9 +175,9 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
      *
      * @return bool
      */
-    public function getClean()
+    public function getMustClean()
     {
-        return $this->_clean;
+        return $this->_mustclean;
     }
 
     /**
@@ -185,10 +185,32 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
      * @param bool $clean
      * @return \Z\Phalcon\Mvc\View\Engine\XSLT
      */
+    public function setMustClean($mustClean)
+    {
+        $this->_mustclean = $mustClean;
+        return $this;
+    }
+
+    /**
+     * Equivalent to ->getMustClean() method
+     * @deprecated
+     * @return boolean
+     */
+    public function getClean()
+    {
+        return $this->getMustClean();
+    }
+
+    /**
+     * Equivalent to ->setMustClean() method
+     *
+     * @deprecated
+     * @param bool $clean
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
     public function setClean($clean)
     {
-        $this->_clean = $clean;
-        return $this;
+        return $this->setMustClean($clean);
     }
 
     /**
@@ -235,7 +257,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
                 return;
             }
 
-        if ($mustClean) {
+        if ($this->getMustClean()) {
             $view->setContent($content);
         } else {
             echo $content;
