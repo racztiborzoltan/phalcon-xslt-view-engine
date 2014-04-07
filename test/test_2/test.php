@@ -1,4 +1,7 @@
 <?php
+//
+// Original sample here: http://docs.phalconphp.com/en/latest/reference/views.html#hierarchical-rendering
+//
 
 require_once '../../vendor/autoload.php';
 
@@ -34,21 +37,15 @@ $di->set('view', function () {
                 // Get the correct class reference:
                 $view_engine = XSLT::getInstance($view_engine->getInstanceId());
 
-                // Change the parameters on the fly during rendering:
-                $parameters = \XML2Array::createArray(file_get_contents('users_other.xml'));
-                $view_engine->mergeParameters($parameters);
-
-                // Change the XSL path:
-                $view_engine->setPath('views/index_other.xsl');
+                $view_engine->setXMLPath('post_other.xml');
+//                 // OR:
+//                 $temp_dom = new DOMDocument();
+//                 $temp_dom->load('post_other.xml');
+//                 $view_engine->setXMLDom($temp_dom);
             });
 
-            $eventsManager->attach('xslt-view-engine:afterRender', function($event, XSLT $view_engine, $rendered_content){
-                $log_content = '';
-                $log_content .= '-------------------------------------------------------------------------------'.PHP_EOL;
-                $log_content .= $rendered_content;
-                $log_content .= '-------------------------------------------------------------------------------'.PHP_EOL;
-                file_put_contents('rendered_content.log', $log_content, FILE_APPEND);
-            });
+//             $eventsManager->attach('xslt-view-engine:afterRender', function($event, XSLT $view_engine, $rendered_content){
+//             });
             // ---------------------------------------------
 
             $engine->setEventsManager($eventsManager);
@@ -91,14 +88,17 @@ $di->set('viewCache', function() {
 $view = $di->get('view');
 
 
-// Load test xml as array:
-$test_params = XML2Array::createArray(file_get_contents('../test_1/users.xml'));
+// test template variables:
+$test_params = array(
+	'postId' => mt_rand()
+);
 
-echo $view->getRender('products', 'list',
+echo $view->getRender('posts', 'show',
     $test_params,
-    function($view) {
+    function($view) use ($test_params){
         //Set any extra options here
         $view->setViewsDir("views/");
+//         $view->setRenderLevel(Phalcon\Mvc\View::LEVEL_MAIN_LAYOUT);
 
         // Cache this view for 1 hour
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -106,7 +106,8 @@ echo $view->getRender('products', 'list',
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //         $view->cache(array(
 //             "lifetime" => 3600,
-//             'key' => 'test_1'.mt_rand()
+//             'key' => 'post-'.$test_params['postId'],
+//             'level' => true
 //         ));
     }
 );
