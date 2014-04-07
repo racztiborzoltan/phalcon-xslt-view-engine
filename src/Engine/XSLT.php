@@ -66,6 +66,14 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
 
     protected $_instanceId = null;
 
+    /**
+     * Path to the fix XML.
+     * Received parameters are ignored
+     * @var string
+     */
+    protected $_xml_path = null;
+
+
 	/* (non-PHPdoc)
 	 * @see \Phalcon\Mvc\View\Engine::__construct()
 	 */
@@ -257,6 +265,37 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
     }
 
     /**
+     * Get path of fix XML for rendering
+     * @return string
+     */
+    public function getXMLPath()
+    {
+        return $this->_xml_path;
+    }
+
+    /**
+     * Set path of fix XML for rendering
+     * @param string $xmlPath
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
+    public function setXMLPath($xmlPath)
+    {
+        $this->_xml_path = (string)$xmlPath;
+        return $this;
+    }
+
+    /**
+     * Set fix XML as instance of DOMDocument
+     * @param \DOMDocument $xmlDom
+     * @return \Z\Phalcon\Mvc\View\Engine\XSLT
+     */
+    public function setXMLDom(\DOMDocument $xmlDom)
+    {
+        $this->_xml_path = $xmlDom;
+        return $this;
+    }
+
+    /**
      * Renders a view using the template engine
      *
      * @param string $path
@@ -272,21 +311,47 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
         $this->setMustClean($mustClean);
 
         // Add to template variables the content of previous View in View hierarchy:
-        $this->_parameters[$this->_options['prevContentTagName']] = $view->getContent();
+        $prev_view_content = $view->getContent();
+        $this->_parameters[$this->_options['prevContentTagName']] = $prev_view_content;
 
         if ($eventsManager = $this->getEventsManager())
             $eventsManager->fire('xslt-view-engine:beforeRender', $this);
 
-        // Convert parameters to XML:
-        $xml = \Array2XML::createXML($this->_options['rootTagName'], $this->getParameters())->saveXML();
-
-        // Create and load XML:
         $xmldoc = new \DOMDocument();
-        $xmldoc->loadXML($xml);
 
+        $xml_path = $this->getXMLPath();
+        if (empty($xml_path))
+        {
+            // Convert parameters to XML:
+            $xml = \Array2XML::createXML($this->_options['rootTagName'], $this->getParameters())->saveXML();
+
+            // Load generated XML:
+            $xmldoc->loadXML($xml);
+        }
+        else
+        {
+            if (is_string($this->_xml_path))
+            {
+                // Load XML:
+                $xmldoc->load($xml_path);
+            }
+            elseif (is_object($this->_xml_path) && $this->_xml_path instanceof \DOMDocument)
+            {
+                $xmldoc = $this->_xml_path;
+            }
+
+            // Insert new tag with content of previous View
+            $root_node = $xmldoc->documentElement;
+            $prev_content_tag = $xmldoc->createElement($this->_options['prevContentTagName'], $prev_view_content);
+            $root_node->appendChild($prev_content_tag);
+            unset($root_node, $prev_content_tag);
+        }
+
+        // Load XSL file:
         $xsldoc = new \DOMDocument();
         $xsldoc->load($this->getPath());
 
+        // Generate the content:
         $proc = new \XSLTProcessor();
         $proc->registerPHPFunctions($this->_options['phpFunctions']);
         $proc->importStyleSheet($xsldoc);
