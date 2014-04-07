@@ -274,7 +274,8 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
         // Add to template variables the content of previous View in View hierarchy:
         $this->_parameters[$this->_options['prevContentTagName']] = $view->getContent();
 
-        $this->_eventsManager->fire('xslt-view-engine:beforeRender', $this);
+        if ($eventsManager = $this->getEventsManager())
+            $eventsManager->fire('xslt-view-engine:beforeRender', $this);
 
         // Convert parameters to XML:
         $xml = \Array2XML::createXML($this->_options['rootTagName'], $this->getParameters())->saveXML();
@@ -291,7 +292,8 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
         $proc->importStyleSheet($xsldoc);
         $content = $proc->transformToXML($xmldoc);
 
-        $this->_eventsManager->fire('xslt-view-engine:afterRender', $this, $content);
+        if ($eventsManager = $this->getEventsManager())
+            $eventsManager->fire('xslt-view-engine:afterRender', $this, $content);
 
         if ($view instanceof \Phalcon\Mvc\View)
             if ($view->isCaching()) {
