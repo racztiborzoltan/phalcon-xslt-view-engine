@@ -1,6 +1,7 @@
 {
     "name": "racztiborzoltan/phalcon-xslt-view-engine",
     "description": "Adapter to use XSLT as templating engine for Phalcon PHP framework",
+    "keywords": ["phalcon", "template-engine", "view-engine", "xslt"],
     "license": "BSD-3-Clause",
     "minimum-stability": "dev",
     "authors": [
