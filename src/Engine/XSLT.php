@@ -307,6 +307,9 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
     {
         $view = $this->getView();
 
+        if (empty($params))
+            $params = array();
+
         // Set values of parameters in class:
         $this->setPath($path);
         $this->mergeParameters(array_merge($this->_options['defaultParameters'], $params));
