@@ -356,11 +356,19 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
         $xsldoc = new \DOMDocument();
         $xsldoc->load($this->getPath());
 
+        // Start output buffering for error messages:
+        ob_start();
+
         // Generate the content:
         $proc = new \XSLTProcessor();
         $proc->registerPHPFunctions($this->_options['phpFunctions']);
         $proc->importStyleSheet($xsldoc);
         $content = $proc->transformToXML($xmldoc);
+
+        // Dump errors:
+        $error_outputs = ob_get_clean();
+        if ($error_outputs !== '')
+            exit($error_outputs);
 
         if ($eventsManager = $this->getEventsManager())
             $eventsManager->fire('xslt-view-engine:afterRender', $this, $content);
