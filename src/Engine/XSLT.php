@@ -67,6 +67,12 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
     protected $_instanceId = null;
 
     /**
+     * For ->render() method
+     * @var \DOMDocument
+     */
+    protected $_xmldoc = null;
+
+    /**
      * Path to the fix XML.
      * Received parameters are ignored
      * @var string
@@ -322,7 +328,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
         if ($eventsManager = $this->getEventsManager())
             $eventsManager->fire('xslt-view-engine:beforeRender', $this);
 
-        $xmldoc = new \DOMDocument();
+        $this->xmldoc = new \DOMDocument();
 
         $xml_path = $this->getXMLPath();
         if (empty($xml_path))
@@ -331,27 +337,35 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
             $xml = \Array2XML::createXML($this->_options['rootTagName'], $this->getParameters())->saveXML();
 
             // Load generated XML:
-            $xmldoc->loadXML($xml);
+            $this->xmldoc->loadXML($xml);
         }
         else
         {
             if (is_string($this->_xml_path))
             {
                 // Load XML:
-                $xmldoc->load($xml_path);
+                $this->xmldoc->load($xml_path);
             }
             elseif (is_object($this->_xml_path) && $this->_xml_path instanceof \DOMDocument)
             {
-                $xmldoc = $this->_xml_path;
+                $this->xmldoc = $this->_xml_path;
             }
 
             // Insert new tag with content of previous View
-            $root_node = $xmldoc->documentElement;
-            $prev_content_tag = $xmldoc->createElement($this->_options['prevContentTagName'], $prev_view_content);
+            $root_node = $this->xmldoc->documentElement;
+            $prev_content_tag = $this->xmldoc->createElement($this->_options['prevContentTagName'], $prev_view_content);
             $root_node->appendChild($prev_content_tag);
             unset($root_node, $prev_content_tag);
         }
 
+
+    /**
+     * Real render the XSLT transformation:
+     *
+     * @return string generated content
+     */
+    protected function _render()
+    {
         // Load XSL file:
         $xsldoc = new \DOMDocument();
         $xsldoc->load($this->getPath());
@@ -363,28 +377,12 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
         $proc = new \XSLTProcessor();
         $proc->registerPHPFunctions($this->_options['phpFunctions']);
         $proc->importStyleSheet($xsldoc);
-        $content = $proc->transformToXML($xmldoc);
+        $content = $proc->transformToXML($this->xmldoc);
 
         // Dump errors:
         $error_outputs = ob_get_clean();
         if ($error_outputs !== '')
             exit($error_outputs);
-
-        if ($eventsManager = $this->getEventsManager())
-            $eventsManager->fire('xslt-view-engine:afterRender', $this, $content);
-
-        if ($view instanceof \Phalcon\Mvc\View)
-            if ($view->isCaching()) {
-                $view->setContent($content);
-                echo $content;
-                return;
-            }
-
-        if ($this->getMustClean()) {
-            $view->setContent($content);
-        } else {
-            echo $content;
-        }
 
         return $content;
     }
