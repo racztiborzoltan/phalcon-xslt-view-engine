@@ -1,26 +1,23 @@
 <?php
 
 require_once '../../vendor/autoload.php';
+include '../_preinit.php';
 
-use Phalcon\DI\FactoryDefault;
-use Phalcon\Mvc\View;
-use Phalcon\Cache\Frontend\Output as OutputFrontend;
-use Phalcon\Cache\Backend\File as FileBackend;
+
 use Z\Phalcon\Mvc\View\Engine\XSLT;
 
 
-$di = new FactoryDefault();
 /**
  * Setting up the view component
-*/
+ */
 $di->set('view', function () {
 
-    $view = new View();
+    $view = new \Phalcon\Mvc\View();
 
     $view->setViewsDir('views/');
 
     $view->registerEngines(array(
-        '.xsl' => 'Z\Phalcon\Mvc\View\Engine\XSLT',
+        '.xsl' => '\Z\Phalcon\Mvc\View\Engine\XSLT',
         // OR:
         '.xsl' => function ($view, $di) {
 
@@ -66,26 +63,6 @@ $di->set('view', function () {
     return $view;
 }, true);
 
-
-//Set the views cache service
-$di->set('viewCache', function() {
-
-    //Cache data for one day by default
-    $frontCache = new OutputFrontend(array(
-        "lifetime" => 86400
-    ));
-
-    $cacheDir = 'cache/';
-    if (!is_dir($cacheDir))
-        mkdir($cacheDir, 0755, true);
-
-    //Memcached connection settings
-    $cache = new FileBackend($frontCache, array(
-        'cacheDir' => $cacheDir
-    ));
-
-    return $cache;
-});
 
 
 $view = $di->get('view');
