@@ -309,7 +309,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
      * @param string $path
      * @param array $params
      */
-    public function render($path, $params, $mustClean = null)
+    public function render($path, $params, $mustClean = false)
     {
         $view = $this->getView();
 
@@ -358,6 +358,24 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
             unset($root_node, $prev_content_tag);
         }
 
+        if ($this->getMustClean() === true)
+        {
+            ob_clean();
+        }
+
+        // call the "real" render method:
+        echo $content = $this->_render();
+
+        if ($this->getMustClean() === true)
+        {
+            $view->setContent(ob_get_contents());
+        }
+
+        if ($eventsManager = $this->getEventsManager())
+            $eventsManager->fire('xslt-view-engine:afterRender', $this, $content);
+
+        return $content;
+    }
 
     /**
      * Real render the XSLT transformation:
