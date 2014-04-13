@@ -95,19 +95,19 @@ $test_params = array(
 
 echo $view->getRender('posts', 'show',
     $test_params,
-    function($view) use ($test_params){
+    function($view){
         //Set any extra options here
         $view->setViewsDir("views/");
-//         $view->setRenderLevel(Phalcon\Mvc\View::LEVEL_MAIN_LAYOUT);
+        $view->setRenderLevel(Phalcon\Mvc\View::LEVEL_ACTION_VIEW);
 
-        // Cache this view for 1 hour
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // Sorry, but this feature is not working properly !
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//         $view->cache(array(
-//             "lifetime" => 3600,
-//             'key' => 'post-'.$test_params['postId'],
-//             'level' => true
-//         ));
+        // Cache this view for 1 hour with random key:
+        $datetime = explode('.', microtime(true));
+        $datetime = date('Y-m-d-H-i-s-', $datetime[0]) . str_pad($datetime[1], 4, '0');
+
+        $view->cache(array(
+            "lifetime" => 3600,
+            'key' => $datetime,
+            'level' => true
+        ));
     }
 );
