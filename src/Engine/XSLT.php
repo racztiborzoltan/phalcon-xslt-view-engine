@@ -168,7 +168,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
      */
     public function setPath($path)
     {
-        $this->_path = $path;
+        $this->_path = (string)$path;
         return $this;
     }
 
@@ -240,7 +240,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
      */
     public function setMustClean($mustClean)
     {
-        $this->_mustclean = $mustClean;
+        $this->_mustclean = (bool)$mustClean;
         return $this;
     }
 
