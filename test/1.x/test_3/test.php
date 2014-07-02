@@ -3,8 +3,8 @@
 // Original sample here: http://docs.phalconphp.com/en/latest/reference/views.html#hierarchical-rendering
 //
 
-require_once '../../vendor/autoload.php';
-include '../_preinit.php';
+require_once '../../../vendor/autoload.php';
+include '../../_preinit.php';
 
 
 use Z\Phalcon\Mvc\View\Engine\XSLT;

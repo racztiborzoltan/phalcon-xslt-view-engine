@@ -1,10 +1,12 @@
 <?php
 
-require_once '../../vendor/autoload.php';
-include '../_preinit.php';
+require_once '../../../vendor/autoload.php';
+include '../../_preinit.php';
 
 
 use Z\Phalcon\Mvc\View\Engine\XSLT;
+use LSS\XML2Array;
+use LSS\Array2XML;
 
 
 /**
@@ -32,7 +34,7 @@ $di->set('view', function () {
                 $view_engine = XSLT::getInstance($view_engine->getInstanceId());
 
                 // Change the parameters on the fly during rendering:
-                $parameters = \XML2Array::createArray(file_get_contents('users_other.xml'));
+                $parameters = XML2Array::createArray(file_get_contents('users_other.xml'));
                 $view_engine->mergeParameters($parameters);
 
                 // Change the XSL path:
