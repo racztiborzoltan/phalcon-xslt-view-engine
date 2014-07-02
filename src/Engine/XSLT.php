@@ -1,7 +1,10 @@
 <?php
 namespace Z\Phalcon\Mvc\View\Engine;
 
-use Phalcon\Events\EventsAwareInterface;
+use \Phalcon\Events\EventsAwareInterface;
+use \LSS\XML2Array;
+use \LSS\Array2XML;
+
 /**
  * Adapter to use XSLT as templating engine
  *
@@ -334,7 +337,7 @@ class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
         if (empty($xml_path))
         {
             // Convert parameters to XML:
-            $xml = \Array2XML::createXML($this->_options['rootTagName'], $this->getParameters())->saveXML();
+            $xml = Array2XML::createXML($this->_options['rootTagName'], $this->getParameters())->saveXML();
 
             // Load generated XML:
             $this->xmldoc->loadXML($xml);
