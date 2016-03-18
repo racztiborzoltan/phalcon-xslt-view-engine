@@ -11,7 +11,7 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Z\\Phalcon\\Mvc\\View\\": "src/" }
+        "psr-4": { "Z\\Phalcon\\Mvc\\View\\Engine\\": "src/" }
     },
     "require": {
 		"openlss/lib-array2xml": "0.0.x"
