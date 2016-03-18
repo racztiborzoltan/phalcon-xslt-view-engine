@@ -20,10 +20,22 @@ $di->set('viewCache', function() {
     if (!is_dir($cacheDir))
         mkdir($cacheDir, 0755, true);
 
-    //Memcached connection settings
+    // File cache settings
     $cache = new FileBackend($frontCache, array(
         'cacheDir' => $cacheDir
     ));
 
     return $cache;
+});
+
+
+//
+// Custom error handler for tests:
+//
+set_error_handler(function ($code, $message, $file = null, $line = null, $context = null) {
+
+    // output buffer cleaning:
+    while (ob_get_level() > 0 && ob_end_clean());
+
+    throw new ErrorException( $message, 0, $code, $file, $line );
 });

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<allusers>
+	<user>
+		<uid>bob</uid>
+	</user>
+	<user>
+		<uid>joe</uid>
+	</user>
+	<user>
+		<uid>alice</uid>
+	</user>
+</allusers>
