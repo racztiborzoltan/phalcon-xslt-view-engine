@@ -78,6 +78,11 @@ class XSLT extends Engine implements EngineInterface
         return $this->_options;
     }
 
+    public static function createXmlFromArray(array $array, $rootTagName)
+    {
+        return Array2XML::createXML($rootTagName, $array);
+    }
+
     /**
      * Renders a view using the template engine
      *
@@ -96,7 +101,7 @@ class XSLT extends Engine implements EngineInterface
         $params[$this->_options['prevContentTagName']] = $prev_view_content;
 
         // Convert parameters to XML:
-        $xml = Array2XML::createXML($this->_options['rootTagName'], $params)->saveXML();
+        $xml = static::createXmlFromArray($params, $this->_options['rootTagName'])->saveXML();
 
         // Load generated XML:
         $xmldoc = new \DOMDocument();
