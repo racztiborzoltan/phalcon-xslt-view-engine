@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>test list for 2.x</title>
+<style type="text/css">
+	table {
+		border: 1px solid black;
+		border-collapse: collapse;
+		margin-bottom: 2em;
+	}
+	table tr > * {
+		padding: 1em;
+		border: 1px solid black;
+	}
+</style>
+</head>
+<body>
+	<h2>Test list</h2>
+	
+	<h3>Test_1</h3>
+	<p>rendering main layout with \Phalcon\Mvc\View</p>
+	<table>
+		<tr>
+			<th></th>
+			<th>cache on</th>
+			<th>cache off</th>
+		</tr>
+		<tr>
+			<th>debug on</th>
+			<td>
+				<a href="test_1/test.php?cache=1&debug=1" target="_blank">link</a>
+			</td>
+			<td>
+				<a href="test_1/test.php?cache=0&debug=1" target="_blank">link</a>
+			</td>
+		</tr>
+		<tr>
+			<th>debug off</th>
+			<td>
+				<a href="test_1/test.php?cache=1&debug=0" target="_blank">link</a>
+			</td>
+			<td>
+				<a href="test_1/test.php?cache=0&debug=0" target="_blank">link</a>
+			</td>
+		</tr>
+	</table>
+	
+	<h3>Test_2</h3>
+	<p>rendering main layout, layout, and action view with \Phalcon\Mvc\View</p>
+	<table>
+		<tr>
+			<th></th>
+			<th>cache on</th>
+			<th>cache off</th>
+		</tr>
+		<tr>
+			<th>debug on</th>
+			<td>
+				<a href="test_2/test.php?cache=1&debug=1" target="_blank">link</a>
+			</td>
+			<td>
+				<a href="test_2/test.php?cache=0&debug=1" target="_blank">link</a>
+			</td>
+		</tr>
+		<tr>
+			<th>debug off</th>
+			<td>
+				<a href="test_2/test.php?cache=1&debug=0" target="_blank">link</a>
+			</td>
+			<td>
+				<a href="test_2/test.php?cache=0&debug=0" target="_blank">link</a>
+			</td>
+		</tr>
+	</table>
+	
+	<h3>Test_3</h3>
+	<p>rendering main layout, layout, and action view with \Phalcon\Mvc\View\Simple</p>
+	<table>
+		<tr>
+			<th></th>
+			<th>cache on</th>
+			<th>cache off</th>
+		</tr>
+		<tr>
+			<th>debug on</th>
+			<td>
+				<a href="test_3/test.php?cache=1&debug=1" target="_blank">link</a>
+			</td>
+			<td>
+				<a href="test_3/test.php?cache=0&debug=1" target="_blank">link</a>
+			</td>
+		</tr>
+		<tr>
+			<th>debug off</th>
+			<td>
+				<a href="test_3/test.php?cache=1&debug=0" target="_blank">link</a>
+			</td>
+			<td>
+				<a href="test_3/test.php?cache=0&debug=0" target="_blank">link</a>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

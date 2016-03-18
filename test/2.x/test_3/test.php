@@ -7,36 +7,12 @@ require_once '../../../vendor/autoload.php';
 include '../../_preinit.php';
 
 
-use Z\Phalcon\Mvc\View\Engine\XSLT;
-
 
 /**
  * Setting up the view component
 */
 $di->set('view', function () {
-
-    $view = new Phalcon\Mvc\View\Simple();
-
-    $view->setViewsDir('views/');
-
-    $view->registerEngines(array(
-        '.xsl' => 'Z\Phalcon\Mvc\View\Engine\XSLT',
-        // OR:
-        '.xsl' => function ($view, $di) {
-
-            $engine = new XSLT($view, $di);
-
-            $engine->setOptions(array(
-                'phpFunctions' => array(
-                    'ucfirst'
-                ),
-            ));
-
-            return $engine;
-        }
-    ));
-
-    return $view;
+    return testViewRegister(new \Phalcon\Mvc\View\Simple());
 }, true);
 
 

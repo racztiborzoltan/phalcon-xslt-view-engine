@@ -3,6 +3,11 @@
 use Phalcon\DI\FactoryDefault;
 use Phalcon\Cache\Frontend\Output as OutputFrontend;
 use Phalcon\Cache\Backend\File as FileBackend;
+use Z\Phalcon\Mvc\View\Engine\XSLT;
+
+
+$_GET['cache'] = isset($_GET['cache']) ? (int)$_GET['cache'] : 0;
+$_GET['debug'] = isset($_GET['debug']) ? (int)$_GET['debug'] : 0;
 
 
 $di = new FactoryDefault();
@@ -29,6 +34,53 @@ $di->set('viewCache', function() {
 });
 
 
+/**
+ * view register function for tests
+ *
+ * @param \Phalcon\Mvc\ViewBaseInterface $view new class instance
+ * @return \Phalcon\Mvc\ViewBaseInterface
+ */
+function testViewRegister(\Phalcon\Mvc\ViewBaseInterface $view)
+{
+    $view->setViewsDir('views/');
+
+    $eventsManager = new \Phalcon\Events\Manager();
+
+    //
+    // For XML debug
+    //
+    if ($_GET['debug'] == 1) {
+        $eventsManager->attach('view:beforeRender', function ($event, \Phalcon\Mvc\ViewBaseInterface $view) {
+            header('Content-Type: text/plain;charset=utf-8');
+            echo XSLT::createXmlFromArray((array)$view->getParamsToView(), 'variables')->saveXML();
+            exit();
+        });
+    }
+
+    $view->setEventsManager($eventsManager);
+
+    $view->registerEngines(array(
+        '.xsl' => '\Z\Phalcon\Mvc\View\Engine\XSLT',
+        // OR:
+        '.xsl' => function ($view, $di) {
+
+            $engine = new XSLT($view, $di);
+
+            $engine->setOptions(array(
+                'phpFunctions' => array(
+                    'ucfirst'
+                ),
+            ));
+
+            return $engine;
+        }
+    ));
+
+    return $view;
+}
+
+
+
 //
 // Custom error handler for tests:
 //
@@ -39,3 +91,4 @@ set_error_handler(function ($code, $message, $file = null, $line = null, $contex
 
     throw new ErrorException( $message, 0, $code, $file, $line );
 });
+

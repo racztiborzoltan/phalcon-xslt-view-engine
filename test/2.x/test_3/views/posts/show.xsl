@@ -11,7 +11,6 @@
 		<p>
 			I have received the parameter
 			<xsl:value-of select="/variables/postId" />
-			&
 		</p>
 	</xsl:template>
 
