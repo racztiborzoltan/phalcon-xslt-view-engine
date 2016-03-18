@@ -11,7 +11,7 @@ use \LSS\Array2XML;
  * @author Rácz Tibor Zoltán <racztiborzoltan@gmail.com>
  *
  */
-class XSLT extends XSLTAbstract
+class XSLT extends \Phalcon\Mvc\View\Engine implements EventsAwareInterface
 {
 
     /**
@@ -120,6 +120,16 @@ class XSLT extends XSLTAbstract
     public function getEventsManager()
     {
         return $this->_eventsManager;
+    }
+
+    /**
+     * Sets the events manager
+     *
+     * @param \Phalcon\Events\ManagerInterface $eventsManager
+     */
+    public function setEventsManager(\Phalcon\Events\ManagerInterface $eventsManager)
+    {
+        $this->_eventsManager = $eventsManager;
     }
 
     /**
